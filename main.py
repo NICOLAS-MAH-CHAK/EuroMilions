@@ -6,12 +6,37 @@ from pydantic import BaseModel
 from pydantic.fields import Field
 
 euroMillions.trainingModel()
-best_to_play = euroMillions.best_to_play()
-print(best_to_play)
 
 
 app= FastAPI()
+@app.get("/api/best")
+async def best():
+    best_to_play = euroMillions.best_to_play()
 
+    mystring = ""
+
+    for digit in best_to_play:
+        mystring += str(digit) + " "
+
+    return{"La meilleur combinaison est " : mystring}
+
+class combi(BaseModel):
+    B1: int
+    B2: int
+    B3: int
+    B4: int
+    B5: int
+    E1: int
+    E2: int
+
+
+
+@app.post("/api/predict")
+async def predict(combi : combi):
+    res = euroMillions.predictionRF([[combi.B1,combi.B2,combi.B3,combi.B4,combi.B5,combi.E1,combi.E2]])
+    return{"La probabilité de cette combinaison est de ": res}
+
+"""
 class Tirage():
     boule1:int
     boule2:int
@@ -27,13 +52,13 @@ class Prediction():
     
 @app.get("/api/best")
 async def get_good_tirage(best: Tirage):
-        best.boule1==best_to_play()[0]
-        best.boule2==best_to_play[1]
-        best.boule3==best_to_play[2]
-        best.boule4==best_to_play[3]
-        best.boule5==best_to_play[4]
-        best.etoile1==best_to_play[5]
-        best.etoile2==best_to_play[6]
+        best.boule1=best_to_play[0]
+        best.boule2=best_to_play[1]
+        best.boule3=best_to_play[2]
+        best.boule4=best_to_play[3]
+        best.boule5=best_to_play[4]
+        best.etoile1=best_to_play[5]
+        best.etoile2=best_to_play[6]
         return {"meilleur_tirage": best, "message": "Voici une combinaison  avec une forte probabilité de gagner"}
 
 
@@ -42,6 +67,8 @@ async def get_good_tirage(best: Tirage):
 async def predict_tirage(prediction: Prediction,tirage:Tirage):
     prediction.gain=euroMillions.predictionRF(tirage)
     return {"model_name":prediction, "message": "Voila la probabilité de gagner de la combinaison entrée"}
+
+"""
 
 """
 @app.put("")
