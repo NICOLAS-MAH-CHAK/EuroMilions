@@ -15,6 +15,9 @@ from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 file = "EuroMillions_numbers.csv"
 
+
+classifier = RandomForestClassifier(n_estimators=100, random_state=0)
+results = []
 def tirages_gagnants(file):
     #lecture du fichier
     f=open(file,"r")
@@ -67,32 +70,65 @@ def remplissage_BDD(tirages):
     new_tirages = np.append(tirages, L, axis = 0)
     
     return new_tirages
-    
 
-if __name__ == '__main__':
+def formatingDataset():
     winner = tirages_gagnants("EuroMillions_numbers.csv")
     bdd = remplissage_BDD(winner)
     np.random.shuffle(bdd)
-    df = pd.DataFrame(data=bdd,columns=["B1","B2","B3","B4","B5","E1","E2","W",])
-    X = df.iloc[:,0:7]
-    y = df.iloc[:,7]
+    df = pd.DataFrame(data=bdd, columns=["B1", "B2", "B3", "B4", "B5", "E1", "E2", "W", ])
+    X = df.iloc[:, 0:7]
+    y = df.iloc[:, 7]
 
-    X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=0)
+    return X,y
 
-    classifier = RandomForestClassifier(n_estimators=100, random_state=0)
+def trainingRF(X,y):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
     classifier.fit(X_train, y_train)
     predictions = classifier.predict_proba(X_test)
+    predictions_proba = predictions[:, 1]
     predictions = predictions[:,1]
 
-    results = []
     for i in range(len(predictions)):
-        if(predictions[i] == 1):
+        if (predictions[i] == 1):
             results.append(X_test.iloc[i].to_numpy())
-        if(predictions[i]<0.5):
-            predictions[i]=0
+        if (predictions[i] < 0.5):
+            predictions[i] = 0
         else:
-            predictions[i]=1
+            predictions[i] = 1
 
-    print("Les meilleurs combinaisons sont : ")
-    print(results)
-    print(accuracy_score(y_test, predictions.astype(int)) ,"% accuracy")
+    #print("Les meilleurs combinaisons sont : ")
+    #print(results)
+    #print(accuracy_score(y_test, predictions.astype(int)), "% accuracy")
+    return predictions_proba,predictions,results
+
+def predictionRF(X):
+
+    df = pd.DataFrame(data=X, columns=["B1", "B2", "B3", "B4", "B5", "E1", "E2" ])
+    predictions = classifier.predict_proba(df)
+    predictions = predictions[:, 1]
+
+
+    print("Probabilité  de gagner = ",predictions[0])
+
+    return  predictions
+
+def best_to_play():
+    print("La meilleur combinaison à jouer est :")
+    return results[0]
+
+def addBase():
+    with open('EuroMillions_numbers.csv', 'a', newline='') as fichiercsv:
+        writer = csv.writer(fichiercsv)
+        writer.writerow(['Duprez', 'Andrée', 'Duprez.andr@gmail.com'])
+        fichiercsv.close()
+
+if __name__ == '__main__':
+
+    addBase()
+    #X,y = formatingDataset()
+    #predictions_proba,predictions,results = trainingRF(X,y)
+    #predictionRF([[1,2,25,12,11,5,1]])
+    #print(best_to_play())
+
+
+
