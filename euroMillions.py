@@ -13,6 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from datetime import date
 file = "EuroMillions_numbers.csv"
 
 
@@ -116,18 +117,25 @@ def best_to_play():
     print("La meilleur combinaison à jouer est :")
     return results[0]
 
-def addBase():
-    with open('EuroMillions_numbers.csv', 'a', newline='') as fichiercsv:
-        writer = csv.writer(fichiercsv)
-        for w in range(2):
-            writer.writerow([10,20,30,40])
+def addBase(combinaison):
+
+    today = date.today()
+    d1 = today.strftime("%d/%m/%Y")
+
+
+    with open('EuroMillions_numbers.csv', 'a', newline='',) as fichiercsv:
+        writer = csv.writer(fichiercsv,delimiter=";")
+        writer.writerow([d1,combinaison[0],combinaison[1],combinaison[2],combinaison[3],combinaison[4],combinaison[5],combinaison[6]])
         fichiercsv.close()
+
+
+
 
 if __name__ == '__main__':
 
-    #addBase()
-    #X,y = formatingDataset()
-    #predictions_proba,predictions,results = trainingRF(X,y)
+    #addBase([1,2,25,12,11,5,1])
+    X,y = formatingDataset()
+    predictions_proba,predictions,results = trainingRF(X,y)
     #predictionRF([[1,2,25,12,11,5,1]])
     #print(best_to_play())
 
