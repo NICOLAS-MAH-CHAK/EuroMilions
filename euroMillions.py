@@ -19,6 +19,9 @@ file = "EuroMillions_numbers.csv"
 
 classifier = RandomForestClassifier(n_estimators=100, random_state=0)
 results = []
+
+
+
 def tirages_gagnants(file):
     #lecture du fichier
     f=open(file,"r")
@@ -97,10 +100,9 @@ def trainingRF(X,y):
         else:
             predictions[i] = 1
 
-    #print("Les meilleurs combinaisons sont : ")
-    #print(results)
-    #print(accuracy_score(y_test, predictions.astype(int)), "% accuracy")
-    return predictions_proba,predictions,results
+    #accuracy_model = accuracy_score(y_test, predictions.astype(int))
+
+    #return predictions_proba,predictions
 
 def predictionRF(X):
 
@@ -129,13 +131,19 @@ def addBase(combinaison):
         fichiercsv.close()
 
 
+def trainingModel():
+    X,y = formatingDataset()
+    trainingRF(X,y)
 
+def infoModel():
+    nom_model = " Random Forest Classifier"
+    param = " n_estimators=100 "
 
+    return nom_model,param
 if __name__ == '__main__':
 
     #addBase([1,2,25,12,11,5,1])
-    X,y = formatingDataset()
-    predictions_proba,predictions,results = trainingRF(X,y)
+    trainingModel()
     #predictionRF([[1,2,25,12,11,5,1]])
     #print(best_to_play())
 
