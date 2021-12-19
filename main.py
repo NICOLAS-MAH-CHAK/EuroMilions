@@ -1,11 +1,14 @@
-
+import euroMillions
 from fastapi import Body,FastAPI
 from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
 from pydantic.fields import Field
-from model.py import best_to_play
-from myEnv.model import predictionRF
+
+euroMillions.trainingModel()
+best_to_play = euroMillions.best_to_play()
+print(best_to_play)
+
 
 app= FastAPI()
 
@@ -37,7 +40,7 @@ async def get_good_tirage(best: Tirage):
 
 @app.post("/api/predict/{tirage}")
 async def predict_tirage(prediction: Prediction,tirage:Tirage):
-    prediction.gain=predictionRF(tirage)
+    prediction.gain=euroMillions.predictionRF(tirage)
     return {"model_name":prediction, "message": "Voila la probabilité de gagner de la combinaison entrée"}
 
 """
