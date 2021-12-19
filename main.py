@@ -5,13 +5,30 @@ from typing import Optional
 from pydantic import BaseModel
 from pydantic.fields import Field
 
-euroMillions.trainingModel()
-
+predictions_proba,predictions,accuracy_model,X_test = euroMillions.training_model()
 
 app= FastAPI()
+
+
 @app.get("/api/best")
 async def best():
-    best_to_play = euroMillions.best_to_play()
+    """Adds a combination in the file where the model tooks his data.
+
+
+    Args:
+        predictions_proba: An array with the probabilities to win about X_test combinations, predicted by the model.
+        X_test: An array with the combinations of tests
+
+
+    Returns:
+      The list of the combination which has the most probability to win with.
+    
+
+    Raises:
+      None  
+
+    """
+    best_to_play = euroMillions.best_to_play(predictions_proba, X_test)
 
     mystring = ""
 
@@ -19,6 +36,7 @@ async def best():
         mystring += str(digit) + " "
 
     return{"La meilleur combinaison est " : mystring}
+
 
 class combi(BaseModel):
     B1: int
@@ -31,55 +49,82 @@ class combi(BaseModel):
 
 
 
-@app.post("/api/predict")
-async def predict(combi : combi):
-    res = euroMillions.predictionRF([[combi.B1,combi.B2,combi.B3,combi.B4,combi.B5,combi.E1,combi.E2]])
-    return{"La probabilité de cette combinaison est de ": res}
+# @app.post("/api/predict")
+# async def predict(combi : combi):
+#     """Print the probability to win for a combination according with the model.
 
-"""
-class Tirage():
-    boule1:int
-    boule2:int
-    boule3:int
-    boule4:int
-    boule5:int
-    etoile1:int
-    etoile2:int
 
-class Prediction():
-    gain:float
+#     Args:
+#       x: a list meaning a combination of a lotto draw.
 
+
+#     Returns:
+#       The probability to win with the combination in enter.
     
-@app.get("/api/best")
-async def get_good_tirage(best: Tirage):
-        best.boule1=best_to_play[0]
-        best.boule2=best_to_play[1]
-        best.boule3=best_to_play[2]
-        best.boule4=best_to_play[3]
-        best.boule5=best_to_play[4]
-        best.etoile1=best_to_play[5]
-        best.etoile2=best_to_play[6]
-        return {"meilleur_tirage": best, "message": "Voici une combinaison  avec une forte probabilité de gagner"}
+
+#     Raises:
+#       None  
+#     """
+#     res = euroMillions.prediction_RF([combi.B1,combi.B2,combi.B3,combi.B4,combi.B5,combi.E1,combi.E2])
+#     return{"La probabilité de cette combinaison est de ": res}
 
 
+# @app.get("/api/model")
+# async def model():
+#     """Indicates information about the model.
 
-@app.post("/api/predict/{tirage}")
-async def predict_tirage(prediction: Prediction,tirage:Tirage):
-    prediction.gain=euroMillions.predictionRF(tirage)
-    return {"model_name":prediction, "message": "Voila la probabilité de gagner de la combinaison entrée"}
 
-"""
+#     Args:
+#       accuracy_model : the accuracy of the model
 
-"""
-@app.put("")
-async def model_read(model_name:BaseModel):
-    return {"Modèle":model_name}
 
-@app.post("/model/predict")
-async def rooget_model(model_name: ModelName):
-    if(model_name == ModelName.alexnet):
-        return {"model_name":model_name, "message": "Deep Learning FTW!"}
-    if(model_name.value == "lenet"):
-        return {"model_name":model_name, "message": "LeCNN all iamges"}
-    return {"model_name":model_name, "message": "autre"}
-"""
+#     Returns:
+#       A tuple with the name of the model, the number of estimators in parameters of the model and the accuracy of the model calculated on the test data.
+    
+
+#     Raises:
+#       None  
+#     """
+#     infos_model = euroMillions.infos_model(accuracy_model)
+
+#     return infos_model
+
+
+# @app.put("/api/model")
+# async def add_base(combi : combi):
+#     """Adds a combination in the file where the model tooks his data.
+
+
+#     Args:
+#       combination: a list meaning a combination which won a lotto draw.
+
+
+#     Returns:
+#       None
+    
+
+#     Raises:
+#       None  
+#     """
+#     euroMillions.add_base(combi)
+#     return {"Combi added":combi}
+
+
+# @app.post("/api/model/retrain")
+# async def retrain():
+#     """Formats a dataset from the file and with tools using random, and  trains a random forest with it.
+
+
+#     Args:
+#       None
+
+
+#     Returns:
+#       The status and the accuracy of the model
+    
+
+#     Raises:
+#       None  
+#     """
+#     accuracy = euroMillions.training_model()[2]
+#     return {"Status":"Modele retrained","Accuracy":accuracy}

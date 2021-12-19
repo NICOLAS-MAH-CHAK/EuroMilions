@@ -23,6 +23,7 @@ classifier = RandomForestClassifier(n_estimators=nb_estimators, random_state=0)
 results = []
 
 
+
 def tirages_gagnants(file):
     """Formats in a list the winning combinations from a .
 
@@ -212,28 +213,31 @@ def prediction_RF(x):
     return prediction
 
 
-def best_to_play():
-    """Print the probability to win for a combination according with the model.
+def best_to_play(predictions_proba, X_test):
+    """Adds a combination in the file where the model tooks his data.
 
 
     Args:
-      x: a list meaning a combination of a lotto draw.
+        predictions_proba: An array with the probabilities to win about X_test combinations, predicted by the model.
+        X_test: An array with the combinations of tests
 
 
     Returns:
-      The probability to win with the entering combination.
+      The list of the combination which has the most probability to win with.
     
 
     Raises:
       None  
+
     """
     max_proba = max(predictions_proba)
     probas = list(predictions_proba)
     index_max = probas.index(max_proba) # index_max_probability_to_win_in_data_tests
     best_combi_in_data_tests = X_test.iloc[index_max].to_numpy()
+    print("La meilleure combinaison à jouer du data test est :",list(best_combi_in_data_tests))
     
-    print("La meilleure combinaison à jouer du data-test est :",list(best_combi_in_data_tests))
     return best_combi_in_data_tests
+
 
 
 def add_base(combinaison):
@@ -282,12 +286,12 @@ def training_model():
 
 
 
-def info_model():
+def info_model(accuracy_model):
     """Indicates information about the model.
 
 
     Args:
-      None
+      accuracy_model : the accuracy of the model
 
 
     Returns:
@@ -310,7 +314,6 @@ if __name__ == '__main__':
     #addBase([1,2,25,12,11,5,1])
     predictions_proba,predictions,accuracy_model,X_test = training_model()
     
-    
     ####
     # Preuve de notre conscience que notre modele ne fonctionne pas convenablement
     # n = len(predictions_proba)
@@ -329,13 +332,11 @@ if __name__ == '__main__':
     # print("Sur",n,"données, il y a",compteur_0,"probas égales à 0,",compteur_1,"probas égales à 1, et",compteur_else,"différentes.")
     ####
     
-    # print(best_to_play())
     # print(prediction_RF([1,2,25,12,11,5,1]))
     
-    print("accuracy =",accuracy_model)
+    #print("accuracy =",accuracy_model)
     d2=datetime.now()
     duree = d2-d1
-    print("Temps d'execution :",duree)
-        
+    #print("Temps d'execution :",duree)
 
 
