@@ -119,12 +119,13 @@ def best_to_play():
 def addBase():
     with open('EuroMillions_numbers.csv', 'a', newline='') as fichiercsv:
         writer = csv.writer(fichiercsv)
-        writer.writerow(['Duprez', 'Andrée', 'Duprez.andr@gmail.com'])
+        for w in range(2):
+            writer.writerow([10,20,30,40])
         fichiercsv.close()
 
 if __name__ == '__main__':
 
-    addBase()
+    #addBase()
     #X,y = formatingDataset()
     #predictions_proba,predictions,results = trainingRF(X,y)
     #predictionRF([[1,2,25,12,11,5,1]])
